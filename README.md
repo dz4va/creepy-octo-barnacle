@@ -5,3 +5,8 @@ TO-DO:<br/>
 1 - Able to change difficulty in game<br/>
 2 - Add a coin system and store i.e powerups<br/>
 3 - Save/Load system because you loose everything now<br/>
+<br/><br/>
+How to Run:
+'''
+python3 guessMyNum.py
+'''
