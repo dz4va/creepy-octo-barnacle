@@ -7,6 +7,6 @@ TO-DO:<br/>
 3 - Save/Load system because you loose everything now<br/>
 <br/><br/>
 How to Run:
-'''
+```
 python3 guessMyNum.py
-'''
+```
