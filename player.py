@@ -1,4 +1,4 @@
-# Max Level
+# CONSTANTS
 LEVEL_MAX = 100
 
 # Player Class

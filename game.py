@@ -1,20 +1,20 @@
 # Imports
-from random import randint      # Random Number Generator
 from math import floor          # Floor the goddamn time
 
 # Sys management
 import time
-import sys
-import platform
-
 
 # Game Stuff
 from player import *
-from gameResources import *
+from gameResources import game_difficulty
+from menu import *
 
 # Move everything here jeeeeeez make the goddam code as clean as possible
 
-class Game(object):
+# CONSTANTS
+DEF_WAIT_TIME = 3
+
+class Game(Menu):
     matchesPlayed = 0   # Match Counter
     sessionH = 0        # Session Hours
     sessionM = 0        # Session Minutes
@@ -24,32 +24,39 @@ class Game(object):
     matchEnded = False  # Actual Match Controller
 
     # Construct the object dammit
-    def __init__(self, name, mode):
-        self.player = Player(name, mode)
+    def __init__(self):
+        #self.player = Player(name, mode)
         self.launchTime = time.time()
         self.randomNum = 0
+        #self.gameTries = game_difficulty[mode]["tries"]
+        #self.gameXp = game_difficulty[mode]["xp"]
+        #self.randLimit = game_difficulty[mode]["limit"]
+        self.triesleft = 0
+        self.firstLaunch = True
+
+    # Create Player Separately
+    def createPlayer(self, name, mode):
+        self.player = Player(name, mode)
+        self.modeName = game_difficulty[mode]["name"]
         self.gameTries = game_difficulty[mode]["tries"]
         self.gameXp = game_difficulty[mode]["xp"]
         self.randLimit = game_difficulty[mode]["limit"]
-        self.triesleft = 0
-        self.firstLaunch = True
+
+    # Change mode/difficulty
+    def changeMode(self, mode):
+        self.player.mode = mode
+        self.modeName = game_difficulty[mode]["name"]
+        self.gameTries = game_difficulty[mode]["tries"]
+        self.gameXp = game_difficulty[mode]["xp"]
+        self.randLimit = game_difficulty[mode]["limit"]
+
 
     # How the game class is being represented
     def __repr__(self):
         self.calculateTimeDelta()
-        st = "%s \n\nMax Tries: %d\nMatches Played: %d\nRandom Number Limit: %d\n%s" % \
-            (str(self.player), self.gameTries, self.matchesPlayed, self.randLimit, self.time())
+        st = "%s \n\nMax Tries: %d\nMatches Played: %d\nDifficulty: %s\nRandom Number Limit: %d\n%s" % \
+            (str(self.player), self.gameTries, self.matchesPlayed, self.modeName, self.randLimit, self.time())
         return st
-
-    # Clear the console the cross platformish way
-    def clear(self):
-        if platform.os.name == "posix":
-            platform.os.system("clear")
-        elif platform.os.name == "nt":
-            platform.os.system("cls")
-        else:
-            print("Sorry I couldn't clear the screen :c")
-            print("\n" * 100)
 
     # Add Match
     def addMatch(self):
@@ -83,6 +90,22 @@ class Game(object):
 
         return False
 
+    # Menu Methods
+    def clear(self):
+        super(Game, self).clear()
+
+    def menu(self):
+        super(Game, self).menu()
+
+    def inp(self):
+        return super(Game, self).inp()
+
+    def difficultyMenu(self):
+        return super(Game, self).difficultyMenu()
+
+    def pleaseWait(self):
+        super(Game, self).pleaseWait()
+
     # Let meah See if da tries left
     def triesLeft(self):
         if self.player.currentTry < self.gameTries:
@@ -95,41 +118,10 @@ class Game(object):
     def addTry(self):
         self.player.currentTry = self.player.currentTry + 1
 
-    # Main Menu
-    def menu(self):
-        if self.firstLaunch:
-            print("\n1. Start Game")
-        else:
-            print("\n1. Continue Game")
-        print("2. Update the View")
-        print("3. Quit Game")
-
     # Update the console screen and game main menu
     def updateMainMenuView(self):
         self.clear()
         print(str(self))
-
-    # Generate New Emoji and get the input
-    def inp(self):
-        n = randint(1,8)
-        st = ""
-        if n == 1:
-            st = "(%s)> " % ("^_^")
-        elif n == 2:
-            st = "(%s)> " % ("^_=")
-        elif n == 3:
-            st = "(%s)> " % ("=_^")
-        elif n == 4:
-            st = "(%s)> " % ("=_=")
-        elif n == 5:
-            st = "(%s)> " % ("+_^")
-        elif n == 6:
-            st = "(%s)> " % ("^_+")
-        elif n == 7:
-            st = "(%s)> " % ("^+^")
-        elif n == 8:
-            st = "(%s)> " % ("^-^")
-        return input(st)
 
     # Return Time String
     def time(self):

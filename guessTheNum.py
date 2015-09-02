@@ -1,70 +1,102 @@
 # -*- coding: utf-8 -*-
-from game import *
 
-inp_name = str(input("Ayyyee! Welcome to Guess My Number! Let me know your name: "))
-print("Choose Difficulty:")
-print("1. Easy              interval = [1 - 1e2(100)]")
-print("2. Medium            interval = [1 - 1e3(1 000)]")
-print("3. Hard              interval = [1 - 1e4(10 000)]")
-print("4. Insane            interval = [1 - 1e5(100 000)]")
-print("5. Get Me Outta This interval = [1 - 5e5(500 000)]")
-inp_difficulty = int(input())
+import game
 
-if inp_difficulty < 1 or inp_difficulty > 5:
-    print("U hurt my feelings human :c")
-    sys.exit(0)
+# Create gameInstance
+gameInstance = game.Game()
+gameInstance.clear()
+print("< ---- <[ Welcome to Guess The Number! ]> ---- >")
+print("< ---- <[    Input Your name Please    ]> ---- >")
+inp_name = str(gameInstance.inp())
+print("\n< ---- <[         So Charming!         ]> ---- >")
+gameInstance.pleaseWait()
+game.time.sleep(game.DEF_WAIT_TIME)
 
-# Create Game Here
-game = Game(inp_name, str(inp_difficulty))
+gameInstance.clear()
+gameInstance.difficultyMenu()
+inp_difficulty = int(gameInstance.inp())
+while (inp_difficulty < 1 or inp_difficulty > 6):
+    gameInstance.clear()
+    print("You too Brutus?")
+    game.time.sleep(game.DEF_WAIT_TIME)
+    gameInstance.clear()
+    gameInstance.difficultyMenu()
+    inp_difficulty = int(gameInstance.inp())
+else:
+    gameInstance.clear()
+    if inp_difficulty >= 3:
+        print("Are you sure you are that pro?")
+    else:
+        print("You can't do more than that?")
+    gameInstance.pleaseWait()
+    game.time.sleep(game.DEF_WAIT_TIME)    
 
-# Game Loop Begins Here
-while not game.ended:
-    game.updateMainMenuView()
-    game.menu()
-    mmp = int(game.inp())
+
+# Create Player here
+gameInstance.createPlayer(inp_name, str(inp_difficulty))
+
+# gameInstance Loop Begins Here
+while not gameInstance.ended:
+    gameInstance.updateMainMenuView()
+    gameInstance.menu()
+    mmp = int(gameInstance.inp())
 
     if mmp == 1:
-        game.clear()
+        gameInstance.clear()
 
-        if game.player.level_checkMax():
+        if gameInstance.player.level_checkMax():
             print("You are already max level! You can quit and be proud!")
             s = str(input("Press [Enter] to continue..."))
             continue
 
-        if game.firstLaunch == True:
+        if gameInstance.firstLaunch == True:
             print("Try to Guess My Number! :>")
-            game.firstLaunch = False
+            gameInstance.firstLaunch = False
         else:
-            print("Back to your #" + str(game.matchesPlayed + 1) + " match? Wish you good luck!")
+            print("Back to your #" + str(gameInstance.matchesPlayed + 1) + " match? Wish you good luck!")
 
          # Generate Random Number
          # Get input and check
          # Control Tries
-        game.generate()
-        while not game.matchEnded:
-            if game.triesLeft():
-                print("\nTries Left: %d" % (game.triesleft))
-                print("Input your guess(1 - %d)" % (game.randLimit))
-                usr_inp = int(game.inp())
+        gameInstance.generate()
+        while not gameInstance.matchEnded:
+            if gameInstance.triesLeft():
+                print("\nTries Left: %d" % (gameInstance.triesleft))
+                print("Input your guess(1 - %d)" % (gameInstance.randLimit))
+                usr_inp = int(gameInstance.inp())
 
-                if game.respond(usr_inp):
+                if gameInstance.respond(usr_inp):
                     s = str(input("Press [Enter] to continue..."))
-                    game.matchEnded = True
+                    gameInstance.matchEnded = True
                 else:
-                    game.addTry()
+                    gameInstance.addTry()
                     continue
             else:
-                game.addMatch()
+                gameInstance.addMatch()
                 print("Sorry out of tries! You get no XP! Try a new Match!")
                 s = str(input("Press [Enter] to continue..."))
-                game.matchEnded = True
+                gameInstance.matchEnded = True
 
-        game.player.resetTries()
-        game.matchEnded = False
+        gameInstance.player.resetTries()
+        gameInstance.matchEnded = False
     elif mmp == 2:
         continue
     elif mmp == 3:
-        game.ended = True
+        gameInstance.clear()
+        gameInstance.difficultyMenu()
+        inp_difficulty = int(gameInstance.inp())
+        while (inp_difficulty < 1 or inp_difficulty > 6):
+            gameInstance.clear()
+            gameInstance.difficultyMenu()
+            inp_difficulty = int(gameInstance.inp())
+        else:
+            gameInstance.clear()
+            gameInstance.changeMode(str(inp_difficulty))
+            print("Mode changed to: %s" % (gameInstance.player.mode))
+            gameInstance.pleaseWait()
+            game.time.sleep(game.DEF_WAIT_TIME)
+    elif mmp == 4:
+        gameInstance.ended = True
 
-game.updateMainMenuView()
-game.bye()
+gameInstance.updateMainMenuView()
+gameInstance.bye()
